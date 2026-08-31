@@ -142,7 +142,6 @@ Both jobs are idempotent and protected by PostgreSQL-backed ShedLock using datab
 | `SUMMARY_CRON` | `0 15 0 * * *` | Spring cron for summary generation |
 | `COMMISSION_BATCH_SIZE` | `500` | Transactions committed per commission batch |
 
-Never commit real credentials. Supply production secrets through the deployment platform's secret-management mechanism.
 
 ## Design decisions
 
