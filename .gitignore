@@ -3,7 +3,6 @@ target/
 
 # IDE and operating-system files
 .idea/
-.vscode/
 .settings/
 .classpath
 .project
@@ -12,7 +11,6 @@ target/
 Thumbs.db
 
 # Local environment and runtime data
-.env
 *.log
 docker-data/
 
@@ -20,3 +18,5 @@ docker-data/
 IMPLEMENTATION_GUIDE.md
 task.md
 *.zip
+config.bat
+node_modules
