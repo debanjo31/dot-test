@@ -96,7 +96,7 @@ curl --request POST http://localhost:8080/api/v1/transfers \
   }'
 ```
 
-The first request returns `201 Created`. Repeating the same request with the same key returns `200 OK`, an `Idempotent-Replay: true` header, and the original transaction without another debit. Reusing the key with different content returns `409 Conflict`.
+A successful first request returns `201 Created`. Repeating the same successful request with the same key returns `200 OK`, an `Idempotent-Replay: true` header, and the original transaction without another debit. Reusing the key with different content returns `409 Conflict`. A request referencing a missing source or destination account returns `404 Not Found` with an `ACCOUNT_NOT_FOUND` problem response; the failed attempt is retained in transaction history.
 
 Final transaction statuses are:
 

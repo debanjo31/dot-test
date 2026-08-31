@@ -1,5 +1,6 @@
 package com.dotplace.transfer.common;
 
+import com.dotplace.transfer.transaction.AccountNotFoundException;
 import com.dotplace.transfer.transaction.IdempotencyConflictException;
 import com.dotplace.transfer.transaction.InvalidTransferException;
 import jakarta.validation.ConstraintViolationException;
@@ -18,6 +19,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+
+  @ExceptionHandler(AccountNotFoundException.class)
+  ResponseEntity<ProblemDetail> handleAccountNotFound(AccountNotFoundException exception) {
+    ProblemDetail detail =
+        createProblem(HttpStatus.NOT_FOUND, "ACCOUNT_NOT_FOUND", exception.getMessage());
+    detail.setProperty("transactionReference", exception.getTransactionReference());
+    detail.setProperty("transactionStatus", "FAILED");
+    ResponseEntity.BodyBuilder response = ResponseEntity.status(HttpStatus.NOT_FOUND);
+    if (exception.isReplayed()) {
+      response.header("Idempotent-Replay", "true");
+    }
+    return response.body(detail);
+  }
 
   @ExceptionHandler(IdempotencyConflictException.class)
   ResponseEntity<ProblemDetail> handleIdempotencyConflict(IdempotencyConflictException exception) {

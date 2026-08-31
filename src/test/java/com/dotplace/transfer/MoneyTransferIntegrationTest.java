@@ -164,11 +164,51 @@ class MoneyTransferIntegrationTest {
                 .header("Idempotency-Key", "missing-key")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(missingAccountRequest))
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.status").value("FAILED"));
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"))
+        .andExpect(jsonPath("$.detail").value("Destination account was not found"))
+        .andExpect(jsonPath("$.transactionStatus").value("FAILED"))
+        .andExpect(jsonPath("$.transactionReference").isNotEmpty());
 
     assertThat(balance(SOURCE)).isEqualByComparingTo("100000.00");
     assertThat(balance(DESTINATION)).isEqualByComparingTo("50000.00");
+  }
+
+  @Test
+  void missingSourceAndDestinationReturnNotFoundAndReplayTheSameError() throws Exception {
+    String request =
+        objectMapper.writeValueAsString(
+            Map.of(
+                "sourceAccountNumber",
+                "8888888888",
+                "destinationAccountNumber",
+                "9999999999",
+                "amount",
+                new BigDecimal("50.00")));
+
+    mockMvc
+        .perform(
+            post("/api/v1/transfers")
+                .header("Idempotency-Key", "both-accounts-missing")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.code").value("ACCOUNT_NOT_FOUND"))
+        .andExpect(jsonPath("$.detail").value("Source and destination accounts were not found"))
+        .andExpect(jsonPath("$.transactionStatus").value("FAILED"))
+        .andExpect(jsonPath("$.transactionReference").isNotEmpty());
+
+    mockMvc
+        .perform(
+            post("/api/v1/transfers")
+                .header("Idempotency-Key", "both-accounts-missing")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request))
+        .andExpect(status().isNotFound())
+        .andExpect(header().string("Idempotent-Replay", "true"))
+        .andExpect(jsonPath("$.detail").value("Source and destination accounts were not found"));
+
+    assertThat(transactionCount()).isEqualTo(1);
   }
 
   @Test

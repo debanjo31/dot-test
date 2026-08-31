@@ -1,5 +1,6 @@
 package com.dotplace.transfer.transaction.api;
 
+import com.dotplace.transfer.transaction.AccountNotFoundException;
 import com.dotplace.transfer.transaction.TransactionSearchService;
 import com.dotplace.transfer.transaction.TransactionStatus;
 import com.dotplace.transfer.transaction.TransferResult;
@@ -49,6 +50,12 @@ public class TransferController {
       @RequestHeader("Idempotency-Key") @NotBlank @Size(max = 128) String idempotencyKey,
       @Valid @RequestBody TransferRequest request) {
     TransferResult result = transferService.transfer(idempotencyKey, request);
+    if (result.hasMissingAccount()) {
+      throw new AccountNotFoundException(
+          result.transaction().getStatusMessage(),
+          result.transaction().getReference(),
+          result.replayed());
+    }
     TransactionResponse response = mapper.toResponse(result.transaction());
     if (result.replayed()) {
       return ResponseEntity.ok().header("Idempotent-Replay", "true").body(response);
