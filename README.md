@@ -70,13 +70,13 @@ Stop the environment with `docker compose down`. Add `--volumes` only when you i
 
 ### Run with a local JDK
 
-This option requires JDK 17 and PostgreSQL. Copy the relevant values from `.env.example`, start PostgreSQL, and run:
+This option requires JDK 17 and PostgreSQL. Copy the relevant values from `.env.example`, start PostgreSQL, and run the application with the local profile so the demo accounts are created:
 
-```bash
-./mvnw spring-boot:run
+```powershell
+.\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
-Flyway applies the schema automatically. The default profile does not create demo accounts; use `SPRING_PROFILES_ACTIVE=local` when demo data is wanted.
+Flyway applies the schema automatically. The demo-account inserts are idempotent, so restarting the application will not create duplicates.
 
 ## API examples
 
