@@ -1,0 +1,7 @@
+logging:
+  level:
+    com.dotplace.transfer: INFO
+
+app:
+  demo-data:
+    enabled: true

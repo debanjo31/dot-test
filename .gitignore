@@ -1,0 +1,22 @@
+# Build output
+target/
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.settings/
+.classpath
+.project
+*.iml
+.DS_Store
+Thumbs.db
+
+# Local environment and runtime data
+.env
+*.log
+docker-data/
+
+# Local notes and submission archives
+IMPLEMENTATION_GUIDE.md
+task.md
+*.zip

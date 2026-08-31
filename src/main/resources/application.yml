@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: money-transfer-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/money_transfer}
+    username: ${DB_USERNAME:money_transfer}
+    password: ${DB_PASSWORD:money_transfer}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+      connection-timeout: 30000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  jackson:
+    default-property-inclusion: non_null
+  mvc:
+    problemdetails:
+      enabled: true
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5level [%thread] [%X{correlationId:-}] %logger{36} - %msg%n"
+
+app:
+  currency: NGN
+  business-zone: ${BUSINESS_TIME_ZONE:Africa/Lagos}
+  commission:
+    cron: ${COMMISSION_CRON:0 5 0 * * *}
+    batch-size: ${COMMISSION_BATCH_SIZE:500}
+  summary:
+    cron: ${SUMMARY_CRON:0 15 0 * * *}
